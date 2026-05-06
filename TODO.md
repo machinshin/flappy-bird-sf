@@ -2,8 +2,8 @@
 
 ## Gameplay
 - [ ] Moving obstacles — pylons that slide up/down, bouncing off walls
-- [ ] Power-ups — shield bubble (survive one hit), slow-motion field, spawning randomly in corridors
-- [ ] Multiple lives / hit points instead of one-shot death
+- [ ] Power-ups — slow-motion field, speed boost, spawning in corridors
+- [ ] Per-run passive upgrades — choose 1-of-3 at every 10th parsec (wider invincibility window, faster thrust recharge, etc.)
 - [ ] Bonus score gates — optional tight gaps worth extra parsecs
 - [ ] Boss corridors — moving obstacles that slide up/down in coordinated patterns
 
@@ -30,4 +30,7 @@
 - [x] Space station pylon obstacles with circuit patterns + hazard lights
 - [x] Difficulty scaling every 5 parsecs
 - [x] High score via localStorage
-- [x] Web Audio API sounds — thrust, score chime, explosion, ambient drone
+- [x] Web Audio API sounds — thrust, score chime, explosion, ambient drone, hit, pickup
+- [x] HP system — 5 shield cells to start, cap at 10, 90-frame invincibility on hit
+- [x] Star-shaped shield pickups — spawn in corridor gaps, never inside pylons
+- [x] HUD shield stars top-left

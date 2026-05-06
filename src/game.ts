@@ -37,7 +37,7 @@ interface Obstacle {
 }
 
 interface HeartPickup {
-  x: number; y: number; phase: number;
+  x: number; y: number; phase: number; rot: number;
 }
 
 type State = 'menu' | 'playing' | 'dying' | 'over';
@@ -442,15 +442,22 @@ class Game {
 
       // Heart pickups
       if (this.hp < MAX_HP && this.frame % HEART_INTERVAL === 0) {
+        const spawnX  = this.W + HEART_RADIUS;
+        const blocker = this.obstacles.find(o => spawnX >= o.x && spawnX <= o.x + OBSTACLE_W);
+        const margin  = 28;
+        const minY = blocker ? blocker.topH + margin : 80;
+        const maxY = blocker ? blocker.botY - margin : this.H - 80;
         this.hearts.push({
-          x: this.W + HEART_RADIUS,
-          y: Math.random() * (this.H - 160) + 80,
+          x: spawnX,
+          y: Math.random() * (maxY - minY) + minY,
           phase: 0,
+          rot: 0,
         });
       }
       for (const h of this.hearts) {
         h.x    -= this.speed;
-        h.phase += 0.08;
+        h.phase += 0.06;
+        h.rot   += 0.03;
         const dx = SHIP_X - h.x;
         const dy = this.shipY - h.y;
         if (Math.sqrt(dx * dx + dy * dy) < HEART_RADIUS + SHIP_RADIUS) {
@@ -734,18 +741,47 @@ class Game {
     }
   }
 
+  private starPath(ctx: CanvasRenderingContext2D, x: number, y: number, outer: number, inner: number, rot: number) {
+    ctx.beginPath();
+    for (let i = 0; i < 8; i++) {
+      const r     = i % 2 === 0 ? outer : inner;
+      const angle = rot + (i * Math.PI) / 4;
+      const px    = x + r * Math.cos(angle);
+      const py    = y + r * Math.sin(angle);
+      i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+  }
+
   private drawHeartPickups() {
     const ctx = this.ctx;
     for (const h of this.hearts) {
-      const pls = Math.sin(h.phase) * 0.3 + 0.7;
+      const pls = Math.sin(h.phase) * 0.25 + 0.75;
       ctx.save();
+
+      // Soft outer halo
+      const halo = ctx.createRadialGradient(h.x, h.y, 0, h.x, h.y, 22);
+      halo.addColorStop(0,   `rgba(0,255,200,${(0.35 * pls).toFixed(2)})`);
+      halo.addColorStop(1,   'rgba(0,255,200,0)');
+      ctx.fillStyle = halo;
+      ctx.beginPath();
+      ctx.arc(h.x, h.y, 22, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 4-pointed star body
       ctx.shadowColor = '#00ffcc';
-      ctx.shadowBlur  = 18 * pls;
-      ctx.font        = '22px sans-serif';
-      ctx.textAlign   = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillStyle   = `rgba(0,255,200,${pls.toFixed(2)})`;
-      ctx.fillText('⬡', h.x, h.y);
+      ctx.shadowBlur  = 14 * pls;
+      ctx.fillStyle   = `rgba(160,255,235,${pls.toFixed(2)})`;
+      this.starPath(ctx, h.x, h.y, 11, 4.5, h.rot);
+      ctx.fill();
+
+      // Bright centre
+      ctx.shadowBlur  = 20;
+      ctx.fillStyle   = `rgba(255,255,255,${(pls * 0.95).toFixed(2)})`;
+      ctx.beginPath();
+      ctx.arc(h.x, h.y, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+
       ctx.restore();
     }
   }
@@ -776,24 +812,17 @@ class Game {
     ctx.fillStyle   = 'rgba(0,195,255,0.55)';
     ctx.fillText(`BEST: ${String(this.best).padStart(4, '0')}`, this.W / 2, 72);
 
-    // Hearts (top-left)
-    ctx.textAlign    = 'left';
-    ctx.textBaseline = 'middle';
-    ctx.font         = '20px sans-serif';
-    const hx = 18;
+    // Shield stars (top-left)
+    const hx = 22;
     const hy = 30;
-    const hStep = 24;
+    const hStep = 22;
     for (let i = 0; i < MAX_HP; i++) {
       const full = i < this.hp;
-      if (full) {
-        ctx.shadowColor = '#00ffcc';
-        ctx.shadowBlur  = 8;
-        ctx.fillStyle   = '#00ffcc';
-      } else {
-        ctx.shadowBlur  = 0;
-        ctx.fillStyle   = 'rgba(0,80,60,0.35)';
-      }
-      ctx.fillText('⬡', hx + i * hStep, hy);
+      ctx.shadowColor = full ? '#00ffcc' : 'transparent';
+      ctx.shadowBlur  = full ? 7 : 0;
+      ctx.fillStyle   = full ? 'rgba(160,255,235,0.95)' : 'rgba(0,80,60,0.3)';
+      this.starPath(ctx, hx + i * hStep, hy, 7, 3, -Math.PI / 4);
+      ctx.fill();
     }
 
     ctx.restore();
