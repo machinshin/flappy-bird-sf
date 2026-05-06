@@ -2,7 +2,7 @@
 // ─── Constants ───────────────────────────────────────────────────────────────
 const GRAVITY = 0.50;
 const THRUST = -10.5;
-const OBSTACLE_W = 68;
+const OBSTACLE_W = 32;
 const BASE_SPEED = 2.6;
 const BASE_INTERVAL = 100; // frames between spawns
 const BASE_GAP = 225;
@@ -732,7 +732,7 @@ class Game {
             ctx.shadowBlur = 9;
             ctx.fillStyle = lcol[i];
             ctx.beginPath();
-            ctx.arc(x + 10 + i * 17, ly, 3.5, 0, Math.PI * 2);
+            ctx.arc(x + 5 + i * (w - 10) / 2, ly, 2.5, 0, Math.PI * 2);
             ctx.fill();
         }
         ctx.shadowBlur = 0;

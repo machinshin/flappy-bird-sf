@@ -41,7 +41,7 @@
 - [x] Parallax starfield + nebula background (3 depth layers)
 - [x] Mid-ground parallax asteroid layer
 - [x] Spaceship with engine glow, cockpit, swept wings, thrust particles
-- [x] Space station pylon obstacles with circuit patterns + hazard lights
+- [x] Space station pylon obstacles with circuit patterns + hazard lights (width = half ship width)
 - [x] HUD shield stars top-left
 
 ### Audio
