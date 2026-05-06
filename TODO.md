@@ -1,6 +1,6 @@
 # Nebula Dash — TODO
 
-## Weapons `[2026-05-06]`
+## Weapons
 - [ ] Basic cannon — fires a single projectile forward on a separate key/button, cooldown-limited
 - [ ] Turret enemies — mounted on pylon faces, fire slow projectiles across the corridor at intervals
 - [ ] Patrol drone enemies — sine-wave flight path through corridor, drop a shield star on destruction
@@ -11,7 +11,7 @@
 - [ ] Laser beam — hold to sustain a continuous beam forward, drains a charge meter
 - [ ] Bomb — lobs a slow arcing projectile that detonates in a radius, clears multiple enemies
 
-## Rogue-like `[2026-05-06]`
+## Rogue-like
 - [ ] Weapon rogue-like upgrades — per-run picks: increased projectile speed, piercing shots, double-fire, reduced cooldown, auto-fire on thrust
 - [ ] Weapon mutations — sector-specific weapon mods that activate for a sector then expire (homing projectiles, explosive rounds, shield-drain beam)
 - [ ] Cursed weapons — powerful weapons with a drawback (e.g. laser beam that damages own shields if held too long)
@@ -20,25 +20,25 @@
 - [ ] Random mid-run events — timed curses & boons ("GRAVITY SURGE: doubled gravity for 10s", "WARP FIELD: gap widens for 10s")
 - [ ] Meta progression — earn credits per parsec, spend between runs on permanent starting perks (extra starting HP, slower difficulty ramp, wider base gap)
 
-## Gameplay `[2026-05-06]`
+## Gameplay
 - [ ] Moving obstacles — pylons that slide up/down, bouncing off walls
 - [ ] Power-ups — slow-motion field, speed boost, spawning in corridors
 - [ ] Per-run passive upgrades — choose 1-of-3 at every 10th parsec (wider invincibility window, faster thrust recharge, etc.)
 - [ ] Bonus score gates — optional tight gaps worth extra parsecs
 - [ ] Boss corridors — moving obstacles that slide up/down in coordinated patterns
 
-## Visuals & Polish `[2026-05-06]`
+## Visuals & Polish
 - [ ] Warp speed trail on the ship (motion blur streaks)
 - [ ] Parallax planet/moon in the far background layer
 - [ ] Shooting stars / animated star clusters
 - [ ] Obstacle variety — rotating rings, angled barriers
 
-## Progression & Content `[2026-05-06]`
+## Progression & Content
 - [ ] Multiple sectors — visual theme changes every N parsecs (asteroid field, nebula zone, warp tunnel)
 - [ ] Unlockable ships with different sizes/hitboxes
 - [ ] Daily challenge seed — same obstacle layout for everyone that day
 
-## Meta / UI `[2026-05-06]`
+## Meta / UI
 - [ ] Leaderboard — localStorage top-10 with initials entry on game over
 - [ ] Endless run score graph
 - [ ] PWA manifest — installs to home screen on mobile
