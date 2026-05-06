@@ -40,6 +40,15 @@ interface HeartPickup {
   x: number; y: number; phase: number; rot: number;
 }
 
+interface MidObject {
+  x: number; y: number;
+  speed: number;
+  size: number;
+  rot: number; rotSpeed: number;
+  alpha: number;
+  pts: [number, number][];  // precomputed polygon vertices relative to centre
+}
+
 type State = 'menu' | 'playing' | 'dying' | 'over';
 
 // ─── Audio Engine ─────────────────────────────────────────────────────────────
@@ -247,6 +256,7 @@ class Game {
 
   private obstacles: Obstacle[]  = [];
   private stars:     Star[]      = [];
+  private midLayer:  MidObject[] = [];
   private particles: Particle[]  = [];
 
   private score  = 0;
@@ -289,6 +299,37 @@ class Game {
   private resize() {
     this.W = this.canvas.width  = window.innerWidth;
     this.H = this.canvas.height = window.innerHeight;
+    this.makeMidLayer();
+  }
+
+  private makeMidObject(x: number): MidObject {
+    const sides = Math.floor(Math.random() * 4) + 7;
+    const size  = Math.random() * 55 + 30;
+    const pts: [number, number][] = [];
+    for (let i = 0; i < sides; i++) {
+      const angle  = (i / sides) * Math.PI * 2;
+      const r      = size * (0.72 + Math.random() * 0.38);
+      pts.push([Math.cos(angle) * r, Math.sin(angle) * r]);
+    }
+    return {
+      x,
+      y:        Math.random() * this.H,
+      speed:    Math.random() * 0.4 + 0.9,
+      size,
+      rot:      Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * 0.002,
+      alpha:    Math.random() * 0.07 + 0.04,
+      pts,
+    };
+  }
+
+  private makeMidLayer() {
+    this.midLayer = [];
+    const n = Math.ceil(this.W / 160);
+    for (let i = 0; i < n; i++) {
+      const obj = this.makeMidObject(Math.random() * this.W);
+      this.midLayer.push(obj);
+    }
   }
 
   private makeStars() {
@@ -416,6 +457,15 @@ class Game {
       if (s.x < 0) s.x = this.W;
     }
 
+    for (const m of this.midLayer) {
+      m.x   -= m.speed * starRate;
+      m.rot += m.rotSpeed;
+      if (m.x < -m.size) {
+        const fresh = this.makeMidObject(this.W + m.size);
+        Object.assign(m, fresh);
+      }
+    }
+
     if (playing) {
       this.thrustCD = Math.max(0, this.thrustCD - 1);
       this.shipVY   = Math.min(this.shipVY + GRAVITY, 14);
@@ -534,6 +584,24 @@ class Game {
       ctx.beginPath();
       ctx.arc(cx, cy, r, 0, Math.PI * 2);
       ctx.fill();
+    }
+  }
+
+  private drawMidLayer() {
+    const ctx = this.ctx;
+    for (const m of this.midLayer) {
+      ctx.save();
+      ctx.translate(m.x, m.y);
+      ctx.rotate(m.rot);
+      ctx.fillStyle   = `rgba(30,22,45,${m.alpha.toFixed(3)})`;
+      ctx.strokeStyle = `rgba(60,45,80,${(m.alpha * 0.6).toFixed(3)})`;
+      ctx.lineWidth   = 1.5;
+      ctx.beginPath();
+      m.pts.forEach(([px, py], i) => i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py));
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
     }
   }
 
@@ -937,6 +1005,7 @@ class Game {
 
     this.drawBg();
     this.drawStars();
+    this.drawMidLayer();
 
     if (this.state !== 'menu') {
       this.drawObstacles();

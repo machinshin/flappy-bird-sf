@@ -231,6 +231,7 @@ class Game {
         this.shipAngle = 0;
         this.obstacles = [];
         this.stars = [];
+        this.midLayer = [];
         this.particles = [];
         this.score = 0;
         this.best = 0;
@@ -265,6 +266,35 @@ class Game {
     resize() {
         this.W = this.canvas.width = window.innerWidth;
         this.H = this.canvas.height = window.innerHeight;
+        this.makeMidLayer();
+    }
+    makeMidObject(x) {
+        const sides = Math.floor(Math.random() * 4) + 7;
+        const size = Math.random() * 55 + 30;
+        const pts = [];
+        for (let i = 0; i < sides; i++) {
+            const angle = (i / sides) * Math.PI * 2;
+            const r = size * (0.72 + Math.random() * 0.38);
+            pts.push([Math.cos(angle) * r, Math.sin(angle) * r]);
+        }
+        return {
+            x,
+            y: Math.random() * this.H,
+            speed: Math.random() * 0.4 + 0.9,
+            size,
+            rot: Math.random() * Math.PI * 2,
+            rotSpeed: (Math.random() - 0.5) * 0.002,
+            alpha: Math.random() * 0.07 + 0.04,
+            pts,
+        };
+    }
+    makeMidLayer() {
+        this.midLayer = [];
+        const n = Math.ceil(this.W / 160);
+        for (let i = 0; i < n; i++) {
+            const obj = this.makeMidObject(Math.random() * this.W);
+            this.midLayer.push(obj);
+        }
     }
     makeStars() {
         this.stars = [];
@@ -386,6 +416,14 @@ class Game {
             if (s.x < 0)
                 s.x = this.W;
         }
+        for (const m of this.midLayer) {
+            m.x -= m.speed * starRate;
+            m.rot += m.rotSpeed;
+            if (m.x < -m.size) {
+                const fresh = this.makeMidObject(this.W + m.size);
+                Object.assign(m, fresh);
+            }
+        }
         if (playing) {
             this.thrustCD = Math.max(0, this.thrustCD - 1);
             this.shipVY = Math.min(this.shipVY + GRAVITY, 14);
@@ -502,6 +540,23 @@ class Game {
             ctx.beginPath();
             ctx.arc(cx, cy, r, 0, Math.PI * 2);
             ctx.fill();
+        }
+    }
+    drawMidLayer() {
+        const ctx = this.ctx;
+        for (const m of this.midLayer) {
+            ctx.save();
+            ctx.translate(m.x, m.y);
+            ctx.rotate(m.rot);
+            ctx.fillStyle = `rgba(30,22,45,${m.alpha.toFixed(3)})`;
+            ctx.strokeStyle = `rgba(60,45,80,${(m.alpha * 0.6).toFixed(3)})`;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            m.pts.forEach(([px, py], i) => i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py));
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
         }
     }
     drawStars() {
@@ -860,6 +915,7 @@ class Game {
         }
         this.drawBg();
         this.drawStars();
+        this.drawMidLayer();
         if (this.state !== 'menu') {
             this.drawObstacles();
             this.drawParticles();
