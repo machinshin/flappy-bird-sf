@@ -48,22 +48,22 @@
 ## Done
 
 ### Visuals & Polish
-- [x] `[2026-05-06]` Spinning 3-pointed shield pickup stars (0.07 rad/frame, clearly readable spin)
-- [x] `[2026-05-06]` Mid-ground parallax asteroid layer (irregular polygons, 0.9–1.3x speed)
-- [x] `[2026-05-06]` Pylon width halved to match ship size (68 → 32px)
-- [x] `[2026-05-06]` HUD shield stars top-left
-- [x] `[2026-05-06]` Space station pylon obstacles with circuit patterns + hazard lights
-- [x] `[2026-05-06]` Spaceship with engine glow, cockpit, swept wings, thrust particles
-- [x] `[2026-05-06]` Parallax starfield + nebula background (3 depth layers)
-- [x] `[2026-05-06]` Fullscreen TypeScript canvas game
+- [x] Spinning 3-pointed shield pickup stars (0.07 rad/frame, clearly readable spin) `[2026-05-06]`
+- [x] Mid-ground parallax asteroid layer (irregular polygons, 0.9–1.3x speed) `[2026-05-06]`
+- [x] Pylon width halved to match ship size (68 → 32px) `[2026-05-06]`
+- [x] HUD shield stars top-left `[2026-05-06]`
+- [x] Space station pylon obstacles with circuit patterns + hazard lights `[2026-05-06]`
+- [x] Spaceship with engine glow, cockpit, swept wings, thrust particles `[2026-05-06]`
+- [x] Parallax starfield + nebula background (3 depth layers) `[2026-05-06]`
+- [x] Fullscreen TypeScript canvas game `[2026-05-06]`
 
 ### Gameplay
-- [x] `[2026-05-06]` Star-shaped shield pickups — spawn in corridor gaps, never inside pylons
-- [x] `[2026-05-06]` HP system — 5 shield cells to start, cap at 10, 90-frame invincibility on hit
-- [x] `[2026-05-06]` Difficulty scaling every 5 parsecs
+- [x] Star-shaped shield pickups — spawn in corridor gaps, never inside pylons `[2026-05-06]`
+- [x] HP system — 5 shield cells to start, cap at 10, 90-frame invincibility on hit `[2026-05-06]`
+- [x] Difficulty scaling every 5 parsecs `[2026-05-06]`
 
 ### Audio
-- [x] `[2026-05-06]` Web Audio API sounds — thrust, score chime, explosion, ambient drone, hit, pickup
+- [x] Web Audio API sounds — thrust, score chime, explosion, ambient drone, hit, pickup `[2026-05-06]`
 
 ### Meta / UI
-- [x] `[2026-05-06]` High score via localStorage
+- [x] High score via localStorage `[2026-05-06]`
