@@ -507,7 +507,7 @@ class Game {
       for (const h of this.hearts) {
         h.x    -= this.speed;
         h.phase += 0.06;
-        h.rot   += 0.03;
+        h.rot   += 0.07;
         const dx = SHIP_X - h.x;
         const dy = this.shipY - h.y;
         if (Math.sqrt(dx * dx + dy * dy) < HEART_RADIUS + SHIP_RADIUS) {
@@ -809,11 +809,11 @@ class Game {
     }
   }
 
-  private starPath(ctx: CanvasRenderingContext2D, x: number, y: number, outer: number, inner: number, rot: number) {
+  private starPath(ctx: CanvasRenderingContext2D, x: number, y: number, outer: number, inner: number, rot: number, points = 4) {
     ctx.beginPath();
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < points * 2; i++) {
       const r     = i % 2 === 0 ? outer : inner;
-      const angle = rot + (i * Math.PI) / 4;
+      const angle = rot + (i * Math.PI) / points;
       const px    = x + r * Math.cos(angle);
       const py    = y + r * Math.sin(angle);
       i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
@@ -840,7 +840,7 @@ class Game {
       ctx.shadowColor = '#00ffcc';
       ctx.shadowBlur  = 14 * pls;
       ctx.fillStyle   = `rgba(160,255,235,${pls.toFixed(2)})`;
-      this.starPath(ctx, h.x, h.y, 11, 4.5, h.rot);
+      this.starPath(ctx, h.x, h.y, 12, 4, h.rot, 3);
       ctx.fill();
 
       // Bright centre

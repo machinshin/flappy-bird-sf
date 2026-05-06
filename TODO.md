@@ -47,7 +47,7 @@
 
 ### Gameplay
 - [x] HP system — 5 shield cells to start, cap at 10, 90-frame invincibility on hit
-- [x] Star-shaped shield pickups — spawn in corridor gaps, never inside pylons
+- [x] Star-shaped shield pickups — spawn in corridor gaps, never inside pylons, spinning 3-pointed star
 - [x] Difficulty scaling every 5 parsecs
 
 ### Visuals & Polish
