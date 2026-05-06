@@ -30,13 +30,22 @@
 - [ ] PWA manifest — installs to home screen on mobile
 
 ## Done
-- [x] Fullscreen TypeScript canvas game
-- [x] Parallax starfield + nebula background
-- [x] Spaceship with engine glow, thrust particles
-- [x] Space station pylon obstacles with circuit patterns + hazard lights
-- [x] Difficulty scaling every 5 parsecs
-- [x] High score via localStorage
-- [x] Web Audio API sounds — thrust, score chime, explosion, ambient drone, hit, pickup
+
+### Gameplay
 - [x] HP system — 5 shield cells to start, cap at 10, 90-frame invincibility on hit
 - [x] Star-shaped shield pickups — spawn in corridor gaps, never inside pylons
+- [x] Difficulty scaling every 5 parsecs
+
+### Visuals & Polish
+- [x] Fullscreen TypeScript canvas game
+- [x] Parallax starfield + nebula background (3 depth layers)
+- [x] Mid-ground parallax asteroid layer
+- [x] Spaceship with engine glow, cockpit, swept wings, thrust particles
+- [x] Space station pylon obstacles with circuit patterns + hazard lights
 - [x] HUD shield stars top-left
+
+### Audio
+- [x] Web Audio API sounds — thrust, score chime, explosion, ambient drone, hit, pickup
+
+### Meta / UI
+- [x] High score via localStorage
