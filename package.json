@@ -1,0 +1,12 @@
+{
+  "name": "flappy-bird-sf",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "serve": "npx serve . -p 3000"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}
