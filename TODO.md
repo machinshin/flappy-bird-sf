@@ -18,6 +18,12 @@
 - [ ] Shooting stars / animated star clusters
 - [ ] Obstacle variety — rotating rings, angled barriers
 
+## Rogue-like
+- [ ] Per-run passive upgrades — pause every 10 parsecs, pick 1-of-3 random upgrades (larger invincibility window, faster thrust recharge, wider collision forgiveness, shield regen, etc.)
+- [ ] Sector mutations — every 20 parsecs the visual theme shifts and a new hazard rule activates (pylons move vertically, double pylon pairs, reversed gravity burst)
+- [ ] Random mid-run events — timed curses & boons ("GRAVITY SURGE: doubled gravity for 10s", "WARP FIELD: gap widens for 10s")
+- [ ] Meta progression — earn credits per parsec, spend between runs on permanent starting perks (extra starting HP, slower difficulty ramp, wider base gap)
+
 ## Meta / UI
 - [ ] Leaderboard — localStorage top-10 with initials entry on game over
 - [ ] Endless run score graph
