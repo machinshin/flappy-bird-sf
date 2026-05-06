@@ -318,7 +318,7 @@ class Game {
       size,
       rot:      Math.random() * Math.PI * 2,
       rotSpeed: (Math.random() - 0.5) * 0.002,
-      alpha:    Math.random() * 0.07 + 0.04,
+      alpha:    Math.random() * 0.18 + 0.14,
       pts,
     };
   }
@@ -593,8 +593,8 @@ class Game {
       ctx.save();
       ctx.translate(m.x, m.y);
       ctx.rotate(m.rot);
-      ctx.fillStyle   = `rgba(30,22,45,${m.alpha.toFixed(3)})`;
-      ctx.strokeStyle = `rgba(60,45,80,${(m.alpha * 0.6).toFixed(3)})`;
+      ctx.fillStyle   = `rgba(55,42,75,${m.alpha.toFixed(3)})`;
+      ctx.strokeStyle = `rgba(110,85,145,${(m.alpha * 0.8).toFixed(3)})`;
       ctx.lineWidth   = 1.5;
       ctx.beginPath();
       m.pts.forEach(([px, py], i) => i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py));
