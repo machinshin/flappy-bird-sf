@@ -9,6 +9,11 @@ const BASE_GAP         = 225;
 const MIN_GAP          = 155;
 const SHIP_X           = 130;
 const SHIP_RADIUS      = 20;
+const START_HP         = 5;
+const MAX_HP           = 10;
+const INVINCIBLE_FRAMES = 90;
+const HEART_RADIUS     = 14;
+const HEART_INTERVAL   = 220;  // frames between heart spawns
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -29,6 +34,10 @@ interface Particle {
 interface Obstacle {
   x: number; topH: number; botY: number;
   passed: boolean; phase: number;
+}
+
+interface HeartPickup {
+  x: number; y: number; phase: number;
 }
 
 type State = 'menu' | 'playing' | 'dying' | 'over';
@@ -167,6 +176,50 @@ class AudioEngine {
     this.droneGain.connect(this.master!);
   }
 
+  hit() {
+    const ctx = this.boot();
+    const now = ctx.currentTime;
+
+    // Thud
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(220, now);
+    osc.frequency.exponentialRampToValueAtTime(40, now + 0.14);
+    const og = ctx.createGain();
+    og.gain.setValueAtTime(0.6, now);
+    og.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+    osc.connect(og); og.connect(this.master!);
+    osc.start(now); osc.stop(now + 0.14);
+
+    // Sharp crack
+    const ns = this.mkNoise(ctx, 0.08);
+    const f  = ctx.createBiquadFilter();
+    f.type = 'bandpass'; f.frequency.value = 600;
+    const ng = ctx.createGain();
+    ng.gain.setValueAtTime(0.35, now);
+    ng.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+    ns.connect(f); f.connect(ng); ng.connect(this.master!);
+    ns.start(now); ns.stop(now + 0.08);
+  }
+
+  heartPickup() {
+    const ctx = this.boot();
+    const now = ctx.currentTime;
+    // Three-note ascending arp: C5 → E5 → G5
+    ([[523.25, 0], [659.25, 0.07], [783.99, 0.14]] as [number, number][]).forEach(([freq, delay]) => {
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const g = ctx.createGain();
+      const t = now + delay;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.2, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+      osc.connect(g); g.connect(this.master!);
+      osc.start(t); osc.stop(t + 0.25);
+    });
+  }
+
   stopDrone() {
     if (!this.droneGain || !this.ctx) return;
     const now = this.ctx.currentTime;
@@ -206,6 +259,10 @@ class Game {
   private interval = BASE_INTERVAL;
   private gap      = BASE_GAP;
   private thrustCD = 0;
+
+  private hp         = START_HP;
+  private invincible = 0;
+  private hearts: HeartPickup[] = [];
 
   private audio = new AudioEngine();
 
@@ -275,6 +332,9 @@ class Game {
     this.interval  = BASE_INTERVAL;
     this.gap       = BASE_GAP;
     this.thrustCD  = 0;
+    this.hp         = START_HP;
+    this.invincible = 0;
+    this.hearts     = [];
     this.audio.startDrone();
   }
 
@@ -380,16 +440,46 @@ class Game {
       }
       this.obstacles = this.obstacles.filter(o => o.x > -OBSTACLE_W - 5);
 
-      if (this.collides()) {
-        this.explode();
-        this.audio.explode();
-        this.audio.stopDrone();
-        this.shake     = 24;
-        this.deathTimer = 75;
-        this.state     = 'dying';
-        if (this.score > this.best) {
-          this.best = this.score;
-          localStorage.setItem('nbDash_best', String(this.best));
+      // Heart pickups
+      if (this.hp < MAX_HP && this.frame % HEART_INTERVAL === 0) {
+        this.hearts.push({
+          x: this.W + HEART_RADIUS,
+          y: Math.random() * (this.H - 160) + 80,
+          phase: 0,
+        });
+      }
+      for (const h of this.hearts) {
+        h.x    -= this.speed;
+        h.phase += 0.08;
+        const dx = SHIP_X - h.x;
+        const dy = this.shipY - h.y;
+        if (Math.sqrt(dx * dx + dy * dy) < HEART_RADIUS + SHIP_RADIUS) {
+          h.x = -9999;
+          this.hp = Math.min(this.hp + 1, MAX_HP);
+          this.audio.heartPickup();
+        }
+      }
+      this.hearts = this.hearts.filter(h => h.x > -HEART_RADIUS - 5);
+
+      if (this.invincible > 0) {
+        this.invincible--;
+      } else if (this.collides()) {
+        this.hp--;
+        if (this.hp <= 0) {
+          this.explode();
+          this.audio.explode();
+          this.audio.stopDrone();
+          this.shake      = 24;
+          this.deathTimer = 75;
+          this.state      = 'dying';
+          if (this.score > this.best) {
+            this.best = this.score;
+            localStorage.setItem('nbDash_best', String(this.best));
+          }
+        } else {
+          this.invincible = INVINCIBLE_FRAMES;
+          this.shake      = 12;
+          this.audio.hit();
         }
       }
 
@@ -644,6 +734,22 @@ class Game {
     }
   }
 
+  private drawHeartPickups() {
+    const ctx = this.ctx;
+    for (const h of this.hearts) {
+      const pls = Math.sin(h.phase) * 0.3 + 0.7;
+      ctx.save();
+      ctx.shadowColor = '#00ffcc';
+      ctx.shadowBlur  = 18 * pls;
+      ctx.font        = '22px sans-serif';
+      ctx.textAlign   = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle   = `rgba(0,255,200,${pls.toFixed(2)})`;
+      ctx.fillText('⬡', h.x, h.y);
+      ctx.restore();
+    }
+  }
+
   private drawParticles() {
     for (const p of this.particles) {
       const a = Math.max(0, p.life / p.maxLife);
@@ -657,18 +763,38 @@ class Game {
   private drawHUD() {
     const ctx = this.ctx;
     ctx.save();
-    ctx.textAlign = 'center';
 
+    // Score (centre)
+    ctx.textAlign   = 'center';
     ctx.font        = 'bold 30px "Courier New", monospace';
     ctx.shadowColor = '#00ffff';
     ctx.shadowBlur  = 14;
     ctx.fillStyle   = '#00ffff';
     ctx.fillText(`PARSECS: ${String(this.score).padStart(4, '0')}`, this.W / 2, 50);
-
     ctx.shadowBlur  = 0;
     ctx.font        = '14px "Courier New", monospace';
     ctx.fillStyle   = 'rgba(0,195,255,0.55)';
     ctx.fillText(`BEST: ${String(this.best).padStart(4, '0')}`, this.W / 2, 72);
+
+    // Hearts (top-left)
+    ctx.textAlign    = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.font         = '20px sans-serif';
+    const hx = 18;
+    const hy = 30;
+    const hStep = 24;
+    for (let i = 0; i < MAX_HP; i++) {
+      const full = i < this.hp;
+      if (full) {
+        ctx.shadowColor = '#00ffcc';
+        ctx.shadowBlur  = 8;
+        ctx.fillStyle   = '#00ffcc';
+      } else {
+        ctx.shadowBlur  = 0;
+        ctx.fillStyle   = 'rgba(0,80,60,0.35)';
+      }
+      ctx.fillText('⬡', hx + i * hStep, hy);
+    }
 
     ctx.restore();
   }
@@ -787,9 +913,12 @@ class Game {
       this.drawObstacles();
       this.drawParticles();
 
-      const showShip = this.state === 'playing'
+      this.drawHeartPickups();
+
+      const invFlash  = this.invincible > 0 && Math.floor(this.invincible / 5) % 2 === 0;
+      const showShip  = this.state === 'playing'
         || (this.state === 'dying' && this.deathTimer > 58);
-      if (showShip) this.drawShip(SHIP_X, this.shipY, this.shipAngle);
+      if (showShip) this.drawShip(SHIP_X, this.shipY, this.shipAngle, invFlash ? 0.25 : 1);
 
       this.drawHUD();
     }
