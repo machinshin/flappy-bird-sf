@@ -7,6 +7,17 @@
 - [ ] Bonus score gates — optional tight gaps worth extra parsecs
 - [ ] Boss corridors — moving obstacles that slide up/down in coordinated patterns
 
+## Weapons
+- [ ] Basic cannon — fires a single projectile forward on a separate key/button, cooldown-limited
+- [ ] Turret enemies — mounted on pylon faces, fire slow projectiles across the corridor at intervals
+- [ ] Patrol drone enemies — sine-wave flight path through corridor, drop a shield star on destruction
+- [ ] Mine enemies — stationary in corridor, arm after 1s, highly visible blinking red
+- [ ] Homing seeker — spawns every 30 parsecs, slowly tracks player Y; must be shot or outlasted
+- [ ] Weapon pickups — collect to switch weapon type (cannon, spread shot, laser beam)
+- [ ] Spread shot — fires 3 projectiles in a fan, shorter range
+- [ ] Laser beam — hold to sustain a continuous beam forward, drains a charge meter
+- [ ] Bomb — lobs a slow arcing projectile that detonates in a radius, clears multiple enemies
+
 ## Progression & Content
 - [ ] Multiple sectors — visual theme changes every N parsecs (asteroid field, nebula zone, warp tunnel)
 - [ ] Unlockable ships with different sizes/hitboxes
@@ -23,6 +34,9 @@
 - [ ] Sector mutations — every 20 parsecs the visual theme shifts and a new hazard rule activates (pylons move vertically, double pylon pairs, reversed gravity burst)
 - [ ] Random mid-run events — timed curses & boons ("GRAVITY SURGE: doubled gravity for 10s", "WARP FIELD: gap widens for 10s")
 - [ ] Meta progression — earn credits per parsec, spend between runs on permanent starting perks (extra starting HP, slower difficulty ramp, wider base gap)
+- [ ] Weapon rogue-like upgrades — per-run picks: increased projectile speed, piercing shots (pass through enemies), double-fire (two projectiles per shot), reduced cooldown, auto-fire on thrust
+- [ ] Weapon mutations — sector-specific weapon mods that activate for a sector and then expire (homing projectiles, explosive rounds, shield-drain beam)
+- [ ] Cursed weapons — powerful weapons with a drawback (e.g. laser beam that also damages your own shields if held too long)
 
 ## Meta / UI
 - [ ] Leaderboard — localStorage top-10 with initials entry on game over
